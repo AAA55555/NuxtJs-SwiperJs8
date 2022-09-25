@@ -36,54 +36,67 @@ $ npm run start
 # generate static project
 $ npm run generate
 ```
+Второй вариант подключаения:
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+nuxt.config.js: 
+```
+plugins: [
+    { src: '~/plugins/swiper-slider.js', mode: 'client' },
+  ],
+```
 
-## Special Directories
+plugins/<swiper-slider.js>
+```
+import Swiper from 'swiper/core/core.js'
 
-You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
+import Autoplay from 'swiper/modules/autoplay/autoplay.js'
+import Pagination from 'swiper/modules/pagination/pagination.js'
+import Thumbs from 'swiper/modules/thumbs/thumbs.js'
+import Vue from 'vue'
 
-### `assets`
+const swiper = {
+  install(Vue, options) {
+    Vue.prototype.$swiper = Swiper
+    Vue.prototype.$swiperModules = {
+      Autoplay,
+      Thumbs,
+      Pagination,
+    }
+  },
+}
 
-The assets directory contains your uncompiled assets such as Stylus or Sass files, images, or fonts.
+Vue.use(swiper)
+```
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/assets).
+template-component
+```
+<template>
+  <div>
+    <div class="swiper my-swiper">
+      <ul class="swiper-wrapper">
+        <li v-for="i in 5" :key="i" class="swiper-slide">{{ i }}</li>
+      </ul>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</template>
 
-### `components`
+<script>
+import 'swiper/swiper-bundle.min.css'
 
-The components directory contains your Vue.js components. Components make up the different parts of your page and can be reused and imported into your pages, layouts and even other components.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
-
-### `layouts`
-
-Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
-
-
-### `pages`
-
-This directory contains your application views and routes. Nuxt will read all the `*.vue` files inside this directory and setup Vue Router automatically.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
-
-### `plugins`
-
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
-
-### `static`
-
-This directory contains your static files. Each file inside this directory is mapped to `/`.
-
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
-
-### `store`
-
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+export default {
+  name: 'AppTtt',
+  mounted() {
+    /* eslint-disable no-unused-vars */
+    const swiper = new this.$swiper(`.my-swiper`, {
+      modules: [this.$swiperModules.Pagination],
+      pagination: {
+        el: '.swiper-pagination',
+        type: 'bullets',
+        clickable: true,
+      },
+    })
+  },
+}
+</script>
+```
